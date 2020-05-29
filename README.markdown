@@ -17,7 +17,7 @@ Start up sbcl with debugging disabled to prevent security problem and with quick
 Load backlight:
 
 ````
-(ql:quicklisp :backlight)
+(ql:quickload :backlight)
 ````
 
 Compile binary:
