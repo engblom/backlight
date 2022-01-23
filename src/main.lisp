@@ -1,5 +1,5 @@
 (defpackage backlight
-  (:use :cl)
+  (:use :cl :alexandria)
   (:export :main))
 (in-package :backlight)
 
@@ -11,6 +11,11 @@
 
 (defvar *quit-on-error-p* t)
 
+(defun adjust-backlight (percent)
+       (let* ((max (parse-integer (read-file-into-string *max-brightness-path*)))
+	     (result (format nil "~d" (round (/ (* percent max) 100)))))        
+	(write-string-into-file result *brightness-path* :if-exists :supersede)))
+
 (defun main ()
   (flet ((syntax-error ()
 	   (format t "Syntax error~%Usage: backlight <percent>~%")
@@ -21,6 +26,4 @@
     (let ((percent (parse-integer (car uiop:*command-line-arguments*)
 				  :junk-allowed t)))
       (unless (and percent (< 0 percent) (<= percent 100)) (syntax-error))
-      (let* ((max (parse-integer (read-file-into-string *max-brightness-path*)))
-	     (result (format nil "~d" (round (/ (* percent max) 100)))))
-	(write-string-into-file result *brightness-path* :if-exists :supersede)))))
+      (adjust-backlight percent))))
